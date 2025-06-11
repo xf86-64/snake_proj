@@ -1,7 +1,6 @@
 #include "snake.h"
 #include <stdlib.h>
 #include <string.h>
-#include <termios.h>
 
 void* generatePlayingField(struct FieldPos* pos)
 {
@@ -106,8 +105,8 @@ void renderField(struct FieldPos* pos, char** field)
             printf("%c", field[i][j]); 
         }
     }
-//        printf("\n");
-       //   printf("\r");
+//      printf("\n");
+       printf("\r");
           fflush(stdout);
 
         // printf("\033[%d;%dH", j, i);

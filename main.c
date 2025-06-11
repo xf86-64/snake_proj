@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <signal.h> // signal handler(ctrl+c detected)
+
 
 int main(int argc, char* argv[])
 {
@@ -34,22 +36,14 @@ int main(int argc, char* argv[])
     
     struct FieldPos* p = initializeSnake(&pos, gen, '*');
     char buf;
-    renderField(p, gen);
-    printf("\033[H");
+     renderField(p, gen);
+     printf("\033[H");   
+
    
                     while(read(STDIN_FILENO, &buf, 1))
-                    {                    
-                       printf("\033[H");
-                        printf("\033[2J");
- //                       sleep(1);
- //                       moveSnake(p, &gen, '*', "right", 1);
- //                       
- //                       renderField(p, gen);
- //                      
-                      // printf("\033[H");
+                    { 
+                              printf("\033[H");
 
-
-                              printf("\033[H"); 
                               if (buf == '\x1B')
                               {
                                   char tmp[2];
@@ -61,50 +55,34 @@ int main(int argc, char* argv[])
                                       switch(tmp[1])
                                       {
                                           case 'C': // right arrow
-                                              printf("\033[2J"); 
-                                              printf("\033[H]");  
-                                              fflush(stdout);   
-        
                                               moveSnake(p, &gen, '*', "right", 1);
                                                
                                               renderField(p, gen);
+
                                               break;
                                           case 'D': // left arrow
-                                              printf("\033[2J");
-                                              printf("\033[H]");
-                                              fflush(stdout);
-        
                                               moveSnake(p, &gen, '*', "left", 1);
                                               renderField(p, gen); 
                                               break;
 
                                            case 'B': // top arrow
-                                              printf("\033[2J");
-                                              //printf("\033[H]");
-                                              fflush(stdout);
-        
                                               moveSnake(p, &gen, '*', "top", 1);
-                                              renderField(p, gen); 
+                                              renderField(p, gen);
+       
                                               break;
-                                            case 'A':
-                                              printf("\033[2J");
-                                              //printf("\033[H]");
-                                              fflush(stdout);
-        
+                                            case 'A': // down arrow 
                                               moveSnake(p, &gen, '*', "down", 1);
-                                              renderField(p, gen); 
+                                              renderField(p, gen);  
                                               break;
-
-
-
-
-
                                       }                                                      
                                   }
                               }
                               else if (buf==4) {break;}
 }
-    fflush(stdout);
+    printf("\033[2J");
+    printf("\033[3J");
+    printf("\033[H");
+
     terminal.c_lflag = oldTerminal_lFlags;
 
     tcsetattr(0, TCSANOW, &terminal);
