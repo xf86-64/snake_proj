@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
     tcsetattr(0, TCSANOW, &terminal);
 
-    struct FieldPos pos = {25, 10};
+    struct FieldPos pos = {50, 50};
     char** gen = (char**)generatePlayingField(&pos);
     
     struct FieldPos* p = initializeSnake(&pos, gen, '*');
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
                     while(read(STDIN_FILENO, &buf, 1))
                     { 
                               printf("\033[H");
-
+                              fflush(stdout);
                               if (buf == '\x1B')
                               {
                                   char tmp[2];
