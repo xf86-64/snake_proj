@@ -97,6 +97,7 @@ void renderField(struct FieldPos* pos, char** field)
 {
     // printf("%d %d\n", pos->snakeX, pos->snakeY);
     unsigned int i, j;
+//    printf("\033[2J\033[1;1H");
     for (i = 0; i < pos->fieldHeight; i++)
     {         
         printf("\n");
@@ -106,7 +107,8 @@ void renderField(struct FieldPos* pos, char** field)
         }
     }
 //      printf("\n");
-       printf("\r");
+          printf("\r");
+          printf("\033[?25l");
           fflush(stdout);
 
         // printf("\033[%d;%dH", j, i);
