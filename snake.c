@@ -48,8 +48,7 @@ struct FieldPos* initializeSnake(struct FieldPos* pos, char** field, char snakeR
     pos->snakeX = x;
     pos->snakeY = y;
 
-    field[y][x] = snakeRenderSymbol;  
-    // printf("%d %d\n", pos->snakeX, pos->snakeY);
+    field[y][x] = snakeRenderSymbol;   
     return pos;
 }
 void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, const char* direction, unsigned int moveDistance)
@@ -83,21 +82,14 @@ void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, cons
         (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
     }
     else 
-        return;
+        return; 
 
-   //    if(isTopArrow || isDownArrow)
-//        pos->snakeY = newY;
-//
-     
     printf("%d %d\r", pos->snakeX, pos->snakeY);
     
-    //(*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
 }
 void renderField(struct FieldPos* pos, char** field)
-{
-    // printf("%d %d\n", pos->snakeX, pos->snakeY);
+{ 
     unsigned int i, j;
-//    printf("\033[2J\033[1;1H");
     for (i = 0; i < pos->fieldHeight; i++)
     {         
         printf("\n");
@@ -106,12 +98,8 @@ void renderField(struct FieldPos* pos, char** field)
             printf("%c", field[i][j]); 
         }
     }
-//      printf("\n");
-          printf("\r");
-          printf("\033[?25l");
-          fflush(stdout);
-
-        // printf("\033[%d;%dH", j, i);
+    printf("\r");
+    fflush(stdout);
 
 }
 void freeMemoryField(struct FieldPos *pos, char **field)

@@ -1,19 +1,11 @@
 #include <stdio.h>
-//
-//typedef union 
-//{
-//    unsigned int x; 
-//    unsigned int y;
-//} snakeStartPos; 
-//
-//
+
 struct FieldPos
 {
     unsigned int fieldWidth;
     unsigned int fieldHeight;
     unsigned int snakeX;
     unsigned int snakeY;
-    // snakeStartPos snakePos ;
 };
 void* generatePlayingField(struct FieldPos* pos);
 

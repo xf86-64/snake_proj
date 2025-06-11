@@ -4,44 +4,62 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <signal.h> // signal handler(ctrl+c detected)
-#include <ncurses.h>
+#include <signal.h> 
+// #include <ncurses.h>
 
-int main(int argc, char* argv[])
+struct termios terminal;
+tcflag_t oldTerminal_lFlags; 
+
+
+char** gen = NULL;
+struct FieldPos pos = {54, 24};
+
+   
+void signalOfImmediateGameExit(int sig) // signal function (handler)
 {
-//    int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-//    if(flags == -1)
-//    {
-//        perror("fcntl F_GETFL error\n"); 
-//        return 1;
-//    }
-//    if (fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK) == -1)
-//    {
-//        perror("fcntl F_SETFL error\n");
-//        return 1;
-//    }
-//
+    if(gen != NULL)
+    {
+        printf("\033[2J");
+        printf("\033[3J");
+        printf("\033[H");
+        fflush(stdout);
+        printf("You successfully immediate exit from snake game\n");
+        terminal.c_lflag = oldTerminal_lFlags;
 
-    struct termios terminal;
-    tcflag_t oldTerminal_lFlags;
+        tcsetattr(0, TCSANOW, &terminal);
+        freeMemoryField(&pos, gen);
+        exit(1);  
+    }
+    else
+        printf("no data\n");
+}
+int main(int argc, char* argv[])
+{ 
     tcgetattr(0, &terminal); 
 
     oldTerminal_lFlags = terminal.c_lflag;
     terminal.c_lflag &= ~(ECHO | ICANON);
 
     tcsetattr(0, TCSANOW, &terminal);
-
-    struct FieldPos pos = {50, 50};
-    char** gen = (char**)generatePlayingField(&pos);
-    
-    struct FieldPos* p = initializeSnake(&pos, gen, '*');
-    char buf;
+ 
+      gen = (char**)generatePlayingField(&pos);
+      struct FieldPos* p = initializeSnake(&pos, gen, '*');
+ 
+     char buf;
+     signal(SIGINT, signalOfImmediateGameExit);
      renderField(p, gen);
-     //printf("\033[2J\033[1;1H");   
+     int isWin = 0;
+     printf("\033[2J\033[1;1H");   
 
-   
+                while(1)
+                { 
+                    if(p->snakeX == 0 || p->snakeY == 0 || p->snakeX == p->fieldWidth-1 || p->snakeY == p->fieldHeight-1)
+                    {
+                        isWin = 0;
+                        break;
+                    }
                     while(read(STDIN_FILENO, &buf, 1))
-                    { 
+                    {                        
                               if (buf == '\x1B')
                               {
                                   char tmp[2];
@@ -54,54 +72,57 @@ int main(int argc, char* argv[])
                                       {
                                           case 'C': // right arrow
                                              printf("\033[3J\033[H");
-                                              fflush(stdout);
+
+                                              fflush(stdout); // clean terminal buffer
 
                                               moveSnake(p, &gen, '*', "right", 1);
                                                
-                                              renderField(p, gen);
-                                              usleep(16666);          
+                                              renderField(p, gen);    
                                               break;
                                           case 'D': // left arrow
                                               printf("\033[3J\033[H");
                                               fflush(stdout);
                                               moveSnake(p, &gen, '*', "left", 1);
                                               renderField(p, gen); 
-                                              usleep(16666);
+
                                               break;
                                     
                                            case 'B': // top arrow
-                                                printf("\033[3J\033[H");
-                                                fflush(stdout);
+                                              printf("\033[3J\033[H");
+                                              fflush(stdout);
 
                                               moveSnake(p, &gen, '*', "top", 1);
                                               renderField(p, gen);
-                                              usleep(16666); 
                                               break;
                                             case 'A': // down arrow 
-                                               printf("\033[3J\033[H");
-                                               fflush(stdout);
-
+                                              printf("\033[3J\033[H");
+                                              fflush(stdout);
 
                                               moveSnake(p, &gen, '*', "down", 1);
                                               renderField(p, gen);  
-                                              usleep(16666);
                                               break;
                                       }                                                      
                                   }
-                                    printf("\033[2J");
-                              
-                              }
-                              else if (buf==4) {break;}
+                               }
+                              //else if (buf==4) {break;}
+                              break;
+    }
 }
-
-    printf("\033[2J");
+      printf("\033[2J");
     printf("\033[3J");
     printf("\033[H");
     fflush(stdout);
+    if(isWin)
+        printf("You win in snake game!\n");
+    else
+        printf("You lost in snake game\n");
+
+
     terminal.c_lflag = oldTerminal_lFlags;
 
     tcsetattr(0, TCSANOW, &terminal);
 
     freeMemoryField(p, gen);
+
     return 0;
 }
