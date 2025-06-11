@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
     tcsetattr(0, TCSANOW, &terminal);
 
-    struct FieldPos pos = {100, 100};
+    struct FieldPos pos = {25, 10};
     char** gen = (char**)generatePlayingField(&pos);
     
     struct FieldPos* p = initializeSnake(&pos, gen, '*');
@@ -39,14 +39,14 @@ int main(int argc, char* argv[])
    
                     while(read(STDIN_FILENO, &buf, 1))
                     {                    
- //                       printf("\033[H");
+                       printf("\033[H");
                         printf("\033[2J");
  //                       sleep(1);
  //                       moveSnake(p, &gen, '*', "right", 1);
  //                       
  //                       renderField(p, gen);
  //                      
- //                       printf("\033[H");
+                      // printf("\033[H");
 
 
                               printf("\033[H"); 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
                                       {
                                           case 'C': // right arrow
                                               printf("\033[2J"); 
-                                              //printf("\033[H]");  
+                                              printf("\033[H]");  
                                               fflush(stdout);   
         
                                               moveSnake(p, &gen, '*', "right", 1);
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
                                               break;
                                           case 'D': // left arrow
                                               printf("\033[2J");
-                                              //printf("\033[H]");
+                                              printf("\033[H]");
                                               fflush(stdout);
         
                                               moveSnake(p, &gen, '*', "left", 1);
@@ -103,7 +103,8 @@ int main(int argc, char* argv[])
                                   }
                               }
                               else if (buf==4) {break;}
-}        
+}
+    fflush(stdout);
     terminal.c_lflag = oldTerminal_lFlags;
 
     tcsetattr(0, TCSANOW, &terminal);
