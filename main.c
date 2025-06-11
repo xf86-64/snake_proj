@@ -42,9 +42,6 @@ int main(int argc, char* argv[])
    
                     while(read(STDIN_FILENO, &buf, 1))
                     { 
-                             printf("\033[H");
-   //                           printf("\033[2J");
-                             fflush(stdout);
                               if (buf == '\x1B')
                               {
                                   char tmp[2];
@@ -56,26 +53,38 @@ int main(int argc, char* argv[])
                                       switch(tmp[1])
                                       {
                                           case 'C': // right arrow
+                                             printf("\033[3J\033[H");
+                                              fflush(stdout);
+
                                               moveSnake(p, &gen, '*', "right", 1);
                                                
                                               renderField(p, gen);
-                                              usleep(10000);          
+                                              usleep(16666);          
                                               break;
                                           case 'D': // left arrow
+                                              printf("\033[3J\033[H");
+                                              fflush(stdout);
                                               moveSnake(p, &gen, '*', "left", 1);
                                               renderField(p, gen); 
-                                              usleep(10000);
+                                              usleep(16666);
                                               break;
                                     
                                            case 'B': // top arrow
+                                                printf("\033[3J\033[H");
+                                                fflush(stdout);
+
                                               moveSnake(p, &gen, '*', "top", 1);
                                               renderField(p, gen);
-                                              usleep(10000); 
+                                              usleep(16666); 
                                               break;
                                             case 'A': // down arrow 
+                                               printf("\033[3J\033[H");
+                                               fflush(stdout);
+
+
                                               moveSnake(p, &gen, '*', "down", 1);
                                               renderField(p, gen);  
-                                              usleep(10000);
+                                              usleep(16666);
                                               break;
                                       }                                                      
                                   }
