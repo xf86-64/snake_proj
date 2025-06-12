@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <signal.h> 
+#include <signal.h>
+#include <time.h>
 // #include <ncurses.h>
 
 struct termios terminal;
@@ -12,7 +13,7 @@ tcflag_t oldTerminal_lFlags;
 
 
 char** gen = NULL;
-struct FieldPos pos = {54, 24};
+struct FieldPos pos = {54, 27};
 
    
 void signalOfImmediateGameExit(int sig) // signal function (handler)
@@ -33,8 +34,10 @@ void signalOfImmediateGameExit(int sig) // signal function (handler)
     else
         printf("no data\n");
 }
+
 int main(int argc, char* argv[])
 { 
+    srand(time(0));
     tcgetattr(0, &terminal); 
 
     oldTerminal_lFlags = terminal.c_lflag;
@@ -46,9 +49,11 @@ int main(int argc, char* argv[])
       struct FieldPos* p = initializeSnake(&pos, gen, '*');
  
      char buf;
+     struct Rand rnd = {0, 0};
      signal(SIGINT, signalOfImmediateGameExit);
      renderField(p, gen);
      int isWin = 0;
+     int characterIsPickUp = 1;
      printf("\033[2J\033[1;1H");   
 
                 while(1)
@@ -58,6 +63,15 @@ int main(int argc, char* argv[])
                         isWin = 0;
                         break;
                     }
+                    if(characterIsPickUp)
+                    {
+                        createSnakeFood(p, &rnd, &gen, ')');
+                        characterIsPickUp = 0;
+                    }
+                    if(p->snakeX==rnd.randCoordX && p->snakeY==rnd.randCoordY)
+                        characterIsPickUp = 1;
+                    printf("\033[3J\033[H");
+                    renderField(p, gen);
                     while(read(STDIN_FILENO, &buf, 1))
                     {                        
                               if (buf == '\x1B')
@@ -97,7 +111,6 @@ int main(int argc, char* argv[])
                                             case 'A': // down arrow 
                                               printf("\033[3J\033[H");
                                               fflush(stdout);
-
                                               moveSnake(p, &gen, '*', "down", 1);
                                               renderField(p, gen);  
                                               break;
@@ -108,7 +121,7 @@ int main(int argc, char* argv[])
                               break;
     }
 }
-      printf("\033[2J");
+    printf("\033[2J");
     printf("\033[3J");
     printf("\033[H");
     fflush(stdout);

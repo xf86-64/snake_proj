@@ -1,7 +1,7 @@
 #include "snake.h"
 #include <stdlib.h>
 #include <string.h>
-
+#include <time.h>
 void* generatePlayingField(struct FieldPos* pos)
 {
     char** field = (char**)malloc(pos->fieldHeight*sizeof(char*));
@@ -102,7 +102,8 @@ void renderField(struct FieldPos* pos, char** field)
     fflush(stdout);
 
 }
-void freeMemoryField(struct FieldPos *pos, char **field)
+
+void freeMemoryField(struct FieldPos *pos, char** field)
 {
     for (int i = 0; i < pos-> fieldHeight; i++)
     {
@@ -110,3 +111,30 @@ void freeMemoryField(struct FieldPos *pos, char **field)
     }
     free(field);    
 }
+
+void createSnakeFood(struct FieldPos* pos, struct Rand* rnd, char*** field, char foodSymbol)
+{
+
+    unsigned int minCoordX = 2;
+    unsigned int maxCoordX = pos->fieldWidth-1;
+
+    unsigned int minCoordY = 2;
+    unsigned int maxCoordY = pos->fieldHeight-1;
+
+    unsigned int randCoordX = rand()%(maxCoordX-minCoordX+1);
+    unsigned int randCoordY = rand()%(maxCoordY-minCoordY+1);
+   // printf("%d %d\n", randCoordX, randCoordY);
+    if ((randCoordX == rnd->randCoordX && randCoordY == rnd->randCoordY) || (randCoordX == rnd->randCoordX || randCoordY == rnd->randCoordY))
+    {
+        createSnakeFood(pos, rnd, field, ')');
+    }
+    else 
+    {
+        rnd->randCoordX = randCoordX;
+        rnd->randCoordY = randCoordY;
+        (*field)[rnd->randCoordY][rnd->randCoordX] = foodSymbol;
+    }
+}
+
+
+
