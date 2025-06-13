@@ -114,25 +114,24 @@ void freeMemoryField(struct FieldPos *pos, char** field)
 
 void createSnakeFood(struct FieldPos* pos, struct Rand* rnd, char*** field, char foodSymbol)
 {
-
-    unsigned int minCoordX = 2;
+    unsigned int minCoordX = 1;
     unsigned int maxCoordX = pos->fieldWidth-1;
 
-    unsigned int minCoordY = 2;
+    unsigned int minCoordY = 1;
     unsigned int maxCoordY = pos->fieldHeight-1;
 
     unsigned int randCoordX = rand()%(maxCoordX-minCoordX+1);
     unsigned int randCoordY = rand()%(maxCoordY-minCoordY+1);
-   // printf("%d %d\n", randCoordX, randCoordY);
-    if ((randCoordX == rnd->randCoordX && randCoordY == rnd->randCoordY) || (randCoordX == rnd->randCoordX || randCoordY == rnd->randCoordY))
+    if ((randCoordX == rnd->randCoordX && randCoordY == rnd->randCoordY) || (randCoordX == rnd->randCoordX || randCoordY == rnd->randCoordY) || (*field)[randCoordY][randCoordX] == '#')
     {
-        createSnakeFood(pos, rnd, field, ')');
+        createSnakeFood(pos, rnd, field, foodSymbol);
     }
     else 
     {
         rnd->randCoordX = randCoordX;
         rnd->randCoordY = randCoordY;
         (*field)[rnd->randCoordY][rnd->randCoordX] = foodSymbol;
+    
     }
 }
 

@@ -37,16 +37,16 @@ void signalOfImmediateGameExit(int sig) // signal function (handler)
 
 int main(int argc, char* argv[])
 { 
-    srand(time(0));
-    tcgetattr(0, &terminal); 
+     srand(time(0));
+     tcgetattr(0, &terminal); 
 
-    oldTerminal_lFlags = terminal.c_lflag;
-    terminal.c_lflag &= ~(ECHO | ICANON);
+     oldTerminal_lFlags = terminal.c_lflag;
+     terminal.c_lflag &= ~(ECHO | ICANON);
 
-    tcsetattr(0, TCSANOW, &terminal);
+     tcsetattr(0, TCSANOW, &terminal);
  
-      gen = (char**)generatePlayingField(&pos);
-      struct FieldPos* p = initializeSnake(&pos, gen, '*');
+     gen = (char**)generatePlayingField(&pos);
+     struct FieldPos* p = initializeSnake(&pos, gen, '*');
  
      char buf;
      struct Rand rnd = {0, 0};
@@ -116,8 +116,7 @@ int main(int argc, char* argv[])
                                               break;
                                       }                                                      
                                   }
-                               }
-                              //else if (buf==4) {break;}
+                               } 
                               break;
     }
 }
