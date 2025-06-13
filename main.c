@@ -126,6 +126,7 @@ int main(int argc, char* argv[])
                             {
                                 isWin = 0;
                             }
+
                             else {
                                 switch(isLastKeyDown)
                                 {
@@ -142,6 +143,12 @@ int main(int argc, char* argv[])
                                        moveSnake(p, &gen, '*', directions[3], 1); 
                                        break;
                                 }
+                            if(p->snakeX == 0 || p->snakeY == 0 || p->snakeX == p->fieldWidth-1 || p->snakeY == p->fieldHeight-1)
+                            {
+                                isWin = 0;
+                            }
+
+
                                 printf("\033[3J\033[H");
                                 renderField(p, gen);
                             }
