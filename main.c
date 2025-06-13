@@ -142,6 +142,7 @@ int main(int argc, char* argv[])
                                        moveSnake(p, &gen, '*', directions[3], 1); 
                                        break;
                                 }
+                                printf("\033[3J\033[H");
                                 renderField(p, gen);
                             }
                             if(characterIsPickUp && isStartGame)
