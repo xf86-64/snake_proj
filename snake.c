@@ -122,6 +122,7 @@ void createSnakeFood(struct FieldPos* pos, struct Rand* rnd, char*** field, char
 
     unsigned int randCoordX = rand()%(maxCoordX-minCoordX+1);
     unsigned int randCoordY = rand()%(maxCoordY-minCoordY+1);
+
     if ((randCoordX == rnd->randCoordX && randCoordY == rnd->randCoordY) || (randCoordX == rnd->randCoordX || randCoordY == rnd->randCoordY) || (*field)[randCoordY][randCoordX] == '#')
     {
         createSnakeFood(pos, rnd, field, foodSymbol);
