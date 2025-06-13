@@ -16,7 +16,14 @@ tcflag_t oldTerminal_lFlags;
 char** gen = NULL;
 struct FieldPos pos = {54, 27};
 
-   
+int characterIsInUnacceptableZone(struct FieldPos* p)
+{
+    if(p->snakeX == 0 || p->snakeY == 0 || p->snakeX == p->fieldWidth-1 || p->snakeY == p->fieldHeight-1)
+    {
+        return 0;
+    } 
+    return 1;   
+} 
 void signalOfImmediateGameExit(int sig) // signal function (handler)
 {
     if(gen != NULL)
@@ -48,131 +55,129 @@ int main(int argc, char* argv[])
  
      gen = (char**)generatePlayingField(&pos);
      struct FieldPos* p = initializeSnake(&pos, gen, '*');
- 
-     // char buf;
-     struct Rand rnd = {0, 0};
-     signal(SIGINT, signalOfImmediateGameExit);
-     renderField(p, gen);
-     int isWin = 1;
-     int isStartGame = 0;
 
-     int characterIsPickUp = 1;
-     char *directions[4] = {"left", "right", "top", "down"};
-     int isLastKeyDown;
-       printf("\033[2J\033[1;1H");   
+    char buf;
+    struct Rand rnd = {0, 0};
+    signal(SIGINT, signalOfImmediateGameExit);
+    renderField(p, gen);
+    int isWin = 1;
+    int isStartGame = 0;
 
-                while(isWin)
-                { 
-                    fd_set fds;
-                    FD_ZERO(&fds);
-                    FD_SET(STDIN_FILENO, &fds);
-                    struct timeval timeout={0, 100000};
-                    int ready = select(STDIN_FILENO+1, &fds, NULL, NULL, &timeout);
-                    if(ready>0 && FD_ISSET(STDIN_FILENO, &fds))
-                    {
-                            isStartGame = 1;              
-                            char buf;        
-                            read(STDIN_FILENO, &buf, 1);  
-                              if (buf== '\x1B')
-                              {
-                                  char tmp[2];
-                                  if(read(0, &tmp[0], 1) != 1) break;
-                                  if(read(0, &tmp[1], 1) != 1) break; 
-                                  
-                                  if (tmp[0]=='[')
-                                  {
-                                      switch(tmp[1])
-                                      {
-                                          case 'C': // right arrow
-                                              printf("\033[3J\033[H");
+    int characterIsPickUp = 1;
+    char *directions[4] = {"left", "right", "top", "down"};
+  int isLastKeyDown;
+      printf("\033[2J\033[1;1H");   
 
-                                              fflush(stdout); // clean terminal buffer
+               while(isWin)
+               { 
+                   if(p->snakeX==rnd.randCoordX && p->snakeY==rnd.randCoordY)
+                        characterIsPickUp = 1;
 
-                                              moveSnake(p, &gen, '*', "right", 1);
-                                              isLastKeyDown = 1; 
-                                              renderField(p, gen);    
-                                              break;
-                                          case 'D': // left arrow
-                                              printf("\033[3J\033[H");
-                                              fflush(stdout);
-                                              moveSnake(p, &gen, '*', "left", 1);
-                                              isLastKeyDown = 0;
-                                              renderField(p, gen); 
+                   fd_set fds;
+                   FD_ZERO(&fds);
+                   FD_SET(STDIN_FILENO, &fds);
+                   struct timeval timeout={0, 100000};
+                   int ready = select(STDIN_FILENO+1, &fds, NULL, NULL, &timeout);
+                   if(ready>0 && FD_ISSET(STDIN_FILENO, &fds))
+                   {
+                           isStartGame = 1;              
+                           char buf;        
+                           read(STDIN_FILENO, &buf, 1);  
+                             if (buf== '\x1B')
+                             {
+                                 char tmp[2];
+                                 if(read(0, &tmp[0], 1) != 1) break;
+                                 if(read(0, &tmp[1], 1) != 1) break; 
+                                 
+                                 if (tmp[0]=='[')
+                                 {
+                                     switch(tmp[1])
+                                     {
+                                         case 'C': // right arrow
 
-                                              break;
-                                    
-                                           case 'B': // top arrow
-                                              printf("\033[3J\033[H");
-                                              fflush(stdout);
+                                             printf("\033[3J\033[H");
 
-                                              moveSnake(p, &gen, '*', "top", 1);
-                                              isLastKeyDown = 2;
-                                              renderField(p, gen);
-                                              break;
-                                            case 'A': // down arrow 
-                                              printf("\033[3J\033[H");
-                                              fflush(stdout);
-                                              moveSnake(p, &gen, '*', "down", 1);
-                                              isLastKeyDown = 3;
-                                              renderField(p, gen);  
-                                              break;
-                                      }                                                      
-                                  }
-                               } 
+                                             fflush(stdout); // clean terminal buffer
+
+                                             moveSnake(p, &gen, '*', "right", 1);
+                                             isLastKeyDown = 1; 
+                                             isWin = characterIsInUnacceptableZone(p); 
+                                             renderField(p, gen);    
+                                             break;
+                                         case 'D': // left arrow
+                                             printf("\033[3J\033[H");
+                                             fflush(stdout);
+                                             moveSnake(p, &gen, '*', "left", 1);
+                                             isLastKeyDown = 0;
+                                             isWin=characterIsInUnacceptableZone(p);
+                                             renderField(p, gen); 
+
+                                             break;
+                                   
+                                          case 'B': // top arrow
+                                             printf("\033[3J\033[H");
+                                             fflush(stdout);
+
+                                             moveSnake(p, &gen, '*', "top", 1);
+                                             isLastKeyDown = 2;
+                                             isWin=characterIsInUnacceptableZone(p);
+                                             renderField(p, gen);
+                                             break;
+                                           case 'A': // down arrow 
+                                             printf("\033[3J\033[H");
+                                             fflush(stdout);
+                                             moveSnake(p, &gen, '*', "down", 1);
+                                             isLastKeyDown = 3;
+                                             isWin=characterIsInUnacceptableZone(p);
+                                             renderField(p, gen);  
+                                             break;
+                                     }                                                      
                                  }
-                    else 
-                    { 
-                            if(p->snakeX == 0 || p->snakeY == 0 || p->snakeX == p->fieldWidth-1 || p->snakeY == p->fieldHeight-1)
-                            {
-                                isWin = 0;
-                            }
-
-                            else {
-                                switch(isLastKeyDown)
-                                {
-                                    case 0:
-                                        moveSnake(p, &gen, '*', directions[0], 1); 
-                                        break;
-                                    case 1:
-                                        moveSnake(p, &gen, '*', directions[1], 1); 
-                                        break;
-                                    case 2:
-                                       moveSnake(p, &gen, '*', directions[2], 1); 
-                                       break;
-                                    case 3:
-                                       moveSnake(p, &gen, '*', directions[3], 1); 
-                                       break;
+                              } 
                                 }
-                            if(p->snakeX == 0 || p->snakeY == 0 || p->snakeX == p->fieldWidth-1 || p->snakeY == p->fieldHeight-1)
-                            {
-                                isWin = 0;
-                            }
+                   else 
+                   { 
+                               isWin = characterIsInUnacceptableZone(p); 
+                               switch(isLastKeyDown)
+                               {
+                                   case 0:
+                                       moveSnake(p, &gen, '*', directions[0], 1); 
+                                       break;
+                                   case 1:
+                                       moveSnake(p, &gen, '*', directions[1], 1); 
+                                       break;
+                                   case 2:
+                                      moveSnake(p, &gen, '*', directions[2], 1); 
+                                      break;
+                                   case 3:
+                                      moveSnake(p, &gen, '*', directions[3], 1); 
+                                      break; 
+
+                               }
+                               isWin = characterIsInUnacceptableZone(p);
+
+                           if(characterIsPickUp && isStartGame)
+                           {
+                               createSnakeFood(p, &rnd, &gen, ')');
+                               characterIsPickUp = 0;
+                           }
+                           printf("\033[3J\033[H");
+                           renderField(p, gen);
+                           fflush(stdout);
 
 
-                                printf("\033[3J\033[H");
-                                renderField(p, gen);
-                            }
-                            if(characterIsPickUp && isStartGame)
-                            {
-                                createSnakeFood(p, &rnd, &gen, ')');
-                                characterIsPickUp = 0;
-                            }
-                            if(p->snakeX==rnd.randCoordX && p->snakeY==rnd.randCoordY)
-                                characterIsPickUp = 1;
-                            printf("\033[3J\033[H");
-                            renderField(p, gen);
-        
 
                     } 
 }
-    printf("\033[2J");
-    printf("\033[3J");
-    printf("\033[H");
-    fflush(stdout);
-    if(isWin)
-        printf("You win in snake game!\n");
-    else
-        printf("You lost in snake game\n");
+   printf("\033[2J");
+   printf("\033[3J");
+   printf("\033[H");
+   fflush(stdout);
+
+   if(isWin)
+       printf("You win in snake game!\n");
+   else
+       printf("You lost in snake game\n");
 
 
     terminal.c_lflag = oldTerminal_lFlags;
