@@ -12,8 +12,8 @@
 struct termios terminal;
 tcflag_t oldTerminal_lFlags; 
 
-
 char** gen = NULL;
+
 struct FieldPos pos = {54, 27};
 
 int characterIsInUnacceptableZone(struct FieldPos* p)
@@ -36,7 +36,7 @@ void signalOfImmediateGameExit(int sig) // signal function (handler)
         terminal.c_lflag = oldTerminal_lFlags;
 
         tcsetattr(0, TCSANOW, &terminal);
-        freeMemoryField(&pos, gen);
+        freeMemoryField(&pos, gen); 
         exit(1);  
     }
     else
@@ -44,7 +44,7 @@ void signalOfImmediateGameExit(int sig) // signal function (handler)
 }
 
 int main(int argc, char* argv[])
-{ 
+{
      srand(time(0));
      tcgetattr(0, &terminal); 
 
@@ -54,6 +54,9 @@ int main(int argc, char* argv[])
      tcsetattr(0, TCSANOW, &terminal);
  
      gen = (char**)generatePlayingField(&pos);
+
+     if(gen == NULL) return 1;
+
      struct FieldPos* p = initializeSnake(&pos, gen, '*');
 
     char buf;
@@ -65,13 +68,15 @@ int main(int argc, char* argv[])
 
     int characterIsPickUp = 1;
     char *directions[4] = {"left", "right", "top", "down"};
-  int isLastKeyDown;
-      printf("\033[2J\033[1;1H");   
+    int isLastKeyDown = 1; 
+    printf("\033[2J\033[1;1H");   
 
                while(isWin)
                { 
                    if(p->snakeX==rnd.randCoordX && p->snakeY==rnd.randCoordY)
-                        characterIsPickUp = 1;
+                   {
+                        characterIsPickUp = 1; 
+                   }
 
                    fd_set fds;
                    FD_ZERO(&fds);
@@ -134,14 +139,14 @@ int main(int argc, char* argv[])
                                      }                                                      
                                  }
                               } 
-                                }
+                           }
                    else 
                    { 
                                isWin = characterIsInUnacceptableZone(p); 
                                switch(isLastKeyDown)
                                {
                                    case 0:
-                                       moveSnake(p, &gen, '*', directions[0], 1); 
+                                       moveSnake(p, &gen, '*', directions[0], 1);
                                        break;
                                    case 1:
                                        moveSnake(p, &gen, '*', directions[1], 1); 
@@ -185,6 +190,5 @@ int main(int argc, char* argv[])
     tcsetattr(0, TCSANOW, &terminal);
 
     freeMemoryField(p, gen);
-
     return 0;
 }

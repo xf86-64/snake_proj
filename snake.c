@@ -53,7 +53,6 @@ struct FieldPos* initializeSnake(struct FieldPos* pos, char** field, char snakeR
 }
 void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, const char* direction, unsigned int moveDistance)
 {
-    // int isNotThere = 0;
     (*field)[pos->snakeY][pos->snakeX] = ' ';
     unsigned int newX, newY;
     newX=newY=0;
@@ -61,7 +60,7 @@ void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, cons
     {
         newX = (pos->snakeX)-moveDistance;
         pos->snakeX = newX;
-        (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
+        (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
     }
     else if(strcmp(direction, "right") == 0)
     { 
@@ -73,13 +72,13 @@ void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, cons
     {
          newY = (pos->snakeY)+moveDistance;
          pos->snakeY = newY;
-        (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
+         (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
     }
     else if(strcmp(direction, "down") == 0)
     {
          newY = (pos->snakeY)-moveDistance;
          pos->snakeY = newY;
-        (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
+         (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
     }
     else 
         return; 
