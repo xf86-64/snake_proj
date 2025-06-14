@@ -16,6 +16,14 @@ char** gen = NULL;
 
 struct FieldPos pos = {54, 27};
 
+enum directions
+{
+   LEFT,
+   RIGHT,
+   TOP,
+   DOWN
+};
+
 int characterIsInUnacceptableZone(struct FieldPos* p)
 {
     if(p->snakeX == 0 || p->snakeY == 0 || p->snakeX == p->fieldWidth-1 || p->snakeY == p->fieldHeight-1)
@@ -65,9 +73,8 @@ int main(int argc, char* argv[])
     renderField(p, gen);
     int isWin = 1;
     int isStartGame = 0;
-
+   
     int characterIsPickUp = 1;
-    char *directions[4] = {"left", "right", "top", "down"};
     int isLastKeyDown = 1; 
     printf("\033[2J\033[1;1H");   
 
@@ -77,17 +84,19 @@ int main(int argc, char* argv[])
                    {
                         characterIsPickUp = 1; 
                    }
-
+                  
                    fd_set fds;
                    FD_ZERO(&fds);
                    FD_SET(STDIN_FILENO, &fds);
+
                    struct timeval timeout={0, 100000};
                    int ready = select(STDIN_FILENO+1, &fds, NULL, NULL, &timeout);
+
                    if(ready>0 && FD_ISSET(STDIN_FILENO, &fds))
                    {
                            isStartGame = 1;              
                            char buf;        
-                           read(STDIN_FILENO, &buf, 1);  
+                            read(STDIN_FILENO, &buf, 1);  
                              if (buf== '\x1B')
                              {
                                  char tmp[2];
@@ -104,16 +113,16 @@ int main(int argc, char* argv[])
 
                                              fflush(stdout); // clean terminal buffer
 
-                                             moveSnake(p, &gen, '*', "right", 1);
-                                             isLastKeyDown = 1; 
+                                             moveSnake(p, &gen, '*', RIGHT, 1);
+                                             isLastKeyDown = RIGHT; 
                                              isWin = characterIsInUnacceptableZone(p); 
                                              renderField(p, gen);    
                                              break;
                                          case 'D': // left arrow
                                              printf("\033[3J\033[H");
                                              fflush(stdout);
-                                             moveSnake(p, &gen, '*', "left", 1);
-                                             isLastKeyDown = 0;
+                                             moveSnake(p, &gen, '*', LEFT, 1);
+                                             isLastKeyDown = LEFT;
                                              isWin=characterIsInUnacceptableZone(p);
                                              renderField(p, gen); 
 
@@ -123,41 +132,49 @@ int main(int argc, char* argv[])
                                              printf("\033[3J\033[H");
                                              fflush(stdout);
 
-                                             moveSnake(p, &gen, '*', "top", 1);
-                                             isLastKeyDown = 2;
+                                             moveSnake(p, &gen, '*', TOP, 1);
+                                             isLastKeyDown = TOP;
                                              isWin=characterIsInUnacceptableZone(p);
                                              renderField(p, gen);
                                              break;
                                            case 'A': // down arrow 
                                              printf("\033[3J\033[H");
                                              fflush(stdout);
-                                             moveSnake(p, &gen, '*', "down", 1);
-                                             isLastKeyDown = 3;
+                                             moveSnake(p, &gen, '*', DOWN, 1);
+                                             isLastKeyDown = DOWN;
                                              isWin=characterIsInUnacceptableZone(p);
                                              renderField(p, gen);  
                                              break;
+                                            default:
+                                                goto A;
                                      }                                                      
                                  }
-                              } 
+                                 else
+                                     goto A;
+                              }
+                             else 
+                             {
+                                goto A;
+                             }
+                             
                            }
                    else 
                    { 
                                isWin = characterIsInUnacceptableZone(p); 
-                               switch(isLastKeyDown)
+A:                             switch(isLastKeyDown)
                                {
-                                   case 0:
-                                       moveSnake(p, &gen, '*', directions[0], 1);
+                                   case LEFT:
+                                       moveSnake(p, &gen, '*', LEFT, 1);
                                        break;
-                                   case 1:
-                                       moveSnake(p, &gen, '*', directions[1], 1); 
+                                   case RIGHT:
+                                       moveSnake(p, &gen, '*', RIGHT, 1); 
                                        break;
-                                   case 2:
-                                      moveSnake(p, &gen, '*', directions[2], 1); 
+                                   case TOP:
+                                      moveSnake(p, &gen, '*', TOP, 1); 
                                       break;
-                                   case 3:
-                                      moveSnake(p, &gen, '*', directions[3], 1); 
+                                   case DOWN:
+                                      moveSnake(p, &gen, '*', DOWN, 1); 
                                       break; 
-
                                }
                                isWin = characterIsInUnacceptableZone(p);
 

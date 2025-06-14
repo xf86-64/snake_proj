@@ -17,7 +17,7 @@ void* generatePlayingField(struct FieldPos* pos);
 
 struct FieldPos* initializeSnake(struct FieldPos* pos, char** field, char snakeRenderSymbol);
 
-void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, const char* direction, unsigned int moveDistance);
+void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, short int direction, unsigned int moveDistance);
 
 void renderField(struct FieldPos* pos, char** field);
 

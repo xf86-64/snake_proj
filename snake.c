@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 void* generatePlayingField(struct FieldPos* pos)
 {
     char** field = (char**)malloc(pos->fieldHeight*sizeof(char*));
@@ -51,37 +52,37 @@ struct FieldPos* initializeSnake(struct FieldPos* pos, char** field, char snakeR
     field[y][x] = snakeRenderSymbol;   
     return pos;
 }
-void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, const char* direction, unsigned int moveDistance)
+void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, short int direction, unsigned int moveDistance)
 {
     (*field)[pos->snakeY][pos->snakeX] = ' ';
     unsigned int newX, newY;
     newX=newY=0;
-    if(strcmp(direction, "left") == 0)
+    switch(direction)
     {
-        newX = (pos->snakeX)-moveDistance;
-        pos->snakeX = newX;
-        (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
+        case 0:
+            newX = (pos->snakeX)-moveDistance;
+            pos->snakeX = newX;
+            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
+            break;
+        case 1:
+            newX = (pos->snakeX)+moveDistance;
+            pos->snakeX = newX;
+            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
+            break;
+        case 2:
+            newY = (pos->snakeY)+moveDistance;
+            pos->snakeY = newY;
+            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
+            break;
+        case 3:
+            newY = (pos->snakeY)-moveDistance;
+            pos->snakeY = newY;
+            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
+            break;
+        default:
+            return;
+
     }
-    else if(strcmp(direction, "right") == 0)
-    { 
-        newX = (pos->snakeX)+moveDistance;
-        pos->snakeX = newX;
-        (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
-    }
-    else if(strcmp(direction, "top") == 0)
-    {
-         newY = (pos->snakeY)+moveDistance;
-         pos->snakeY = newY;
-         (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
-    }
-    else if(strcmp(direction, "down") == 0)
-    {
-         newY = (pos->snakeY)-moveDistance;
-         pos->snakeY = newY;
-         (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol;  
-    }
-    else 
-        return; 
 
 //    printf("%d %d\r", pos->snakeX, pos->snakeY);
     
