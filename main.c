@@ -153,9 +153,7 @@ int main(int argc, char* argv[])
                                      goto A;
                               }
                              else 
-                             {
                                 goto A;
-                             }
                              
                            }
                    else 
