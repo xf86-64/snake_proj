@@ -17,10 +17,14 @@ void* generatePlayingField(struct FieldPos* pos);
 
 struct FieldPos* initializeSnake(struct FieldPos* pos, char** field, char snakeRenderSymbol);
 
-void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, short int direction, unsigned int moveDistance);
+void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, short int direction, unsigned int moveDistance, unsigned int snakeSize, char** snake);
+
+void addSize(char snakeRenderSymbol, unsigned int snakeSize, char** snake);
 
 void renderField(struct FieldPos* pos, char** field);
 
 void freeMemoryField(struct FieldPos* pos, char** field);
 
 void createSnakeFood(struct FieldPos* pos, struct Rand* rnd, char*** field, char foodSymbol);
+
+

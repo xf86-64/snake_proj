@@ -52,40 +52,70 @@ struct FieldPos* initializeSnake(struct FieldPos* pos, char** field, char snakeR
     field[y][x] = snakeRenderSymbol;   
     return pos;
 }
-void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, short int direction, unsigned int moveDistance)
+void moveSnake(struct FieldPos* pos, char*** field, char snakeRenderSymbol, short int direction, unsigned int moveDistance, unsigned int snakeSize, char** snake)
 {
-    (*field)[pos->snakeY][pos->snakeX] = ' ';
-    unsigned int newX, newY;
-    newX=newY=0;
-    switch(direction)
-    {
-        case 0:
-            newX = (pos->snakeX)-moveDistance;
-            pos->snakeX = newX;
-            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
-            break;
-        case 1:
-            newX = (pos->snakeX)+moveDistance;
-            pos->snakeX = newX;
-            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
-            break;
-        case 2:
-            newY = (pos->snakeY)+moveDistance;
-            pos->snakeY = newY;
-            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
-            break;
-        case 3:
-            newY = (pos->snakeY)-moveDistance;
-            pos->snakeY = newY;
-            (*field)[pos->snakeY][pos->snakeX] = snakeRenderSymbol; 
-            break;
-        default:
-            return;
-
-    }
-
-//    printf("%d %d\r", pos->snakeX, pos->snakeY);
+    // (*field)[pos->snakeY][pos->snakeX] = ' ';
+    unsigned int newX = 0, newY = 0;
+    //char buf[3] = {'*', '*', '*'}; 
     
+    unsigned int curSnakePosX = pos->snakeX;
+    unsigned int curSnakePosY = pos->snakeY;
+
+    unsigned int newPointX;
+    unsigned int newPointY;
+
+    unsigned int i = 0;
+   // switch(direction)
+   // {
+   //     case 1:
+   //       
+   //         for (; i < snakeSize; i++)
+   //         {
+   //             (*field)[curSnakePosY][(curSnakePosX+i)] = ' ';
+   //            
+   //             (*field)[curSnakePosY][(curSnakePosX+i)+snakeSize] = (*snake)[i]; 
+   //            
+   //         }
+   //         pos->snakeX = curSnakePosX+i;
+   //         (*field)[curSnakePosY][pos->snakeX] = ' '; 
+   //         break;
+   //     case 0:
+   //         
+   //         for(; i < snakeSize; i++)
+   //         {
+   //             (*field)[curSnakePosY][(curSnakePosX-i)] = ' ';
+
+ 
+   //             (*field)[curSnakePosY][(curSnakePosX-i)+snakeSize] = (*snake)[i]; 
+   //        }
+   //         pos->snakeX = curSnakePosX-i;
+   //         (*field)[curSnakePosY][pos->snakeX] = ' '; 
+   //         break;
+   // }
+   switch(direction)
+   {
+       case 0:
+           for(; i < snakeSize; i++)
+           {
+                (*field)[curSnakePosY][curSnakePosX+1] = ' ';
+                (*field)[curSnakePosY][curSnakePosX-1] = (*snake)[i]; 
+                pos->snakeX = curSnakePosX-1;
+           } 
+           break;
+       case 1:
+           for(; i < snakeSize; i++)
+           {
+                (*field)[curSnakePosY][curSnakePosX-1] = ' ';
+                (*field)[curSnakePosY][curSnakePosX+1] = (*snake)[i]; 
+                pos->snakeX = curSnakePosX+1;
+           }
+            break;
+   }
+    printf("%d %d", pos->snakeX, pos->snakeY);
+}
+void addSize(char snakeRenderSymbol, unsigned int snakeSize, char** snake)
+{
+    (*snake)[snakeSize] = snakeRenderSymbol; 
 }
 void renderField(struct FieldPos* pos, char** field)
 { 
